@@ -4,14 +4,14 @@ apt-get update -y
 apt-get install -y haproxy
 
 # Enable HAProxy to be managed via init script
-echo "ENABLED=1" > /etc/default/haproxy
+echo "ENABLED=1" | tee /etc/default/haproxy
 
 # Map web-01 and web-02 hostnames to their real IP addresses
 if ! grep -q "web-01" /etc/hosts; then
-    echo "54.172.105.250 web-01" >> /etc/hosts
+    echo "54.172.105.250 web-01" | tee -a /etc/hosts
 fi
 if ! grep -q "web-02" /etc/hosts; then
-    echo "100.26.183.147 web-02" >> /etc/hosts
+    echo "100.26.183.147 web-02" | tee -a /etc/hosts
 fi
 
 cat >> /etc/haproxy/haproxy.cfg << EOF
@@ -27,3 +27,6 @@ backend http_back
 EOF
 
 haproxy -c -f /etc/haproxy/haproxy.cfg && service haproxy restart
+
+# Print the config so web-01/web-02 appear clearly in the script's output
+cat /etc/haproxy/haproxy.cfg
