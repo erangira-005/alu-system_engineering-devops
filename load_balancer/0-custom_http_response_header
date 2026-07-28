@@ -3,11 +3,8 @@
 # shellcheck disable=SC2154
 apt-get update -y
 apt-get install -y nginx
-
 echo "Holberton School for the win!" > /var/www/html/index.html
-
 if ! grep -q "X-Served-By" /etc/nginx/sites-available/default; then
-    sed -i "s|server_name _;|server_name _;\n\tadd_header X-Served-By \$HOSTNAME;|" /etc/nginx/sites-available/default
+    sed -i "0,/server_name _;/s|server_name _;|server_name _;\n\tadd_header X-Served-By \$hostname;|" /etc/nginx/sites-available/default
 fi
-
-service nginx restart
+nginx -t && service nginx restart
